@@ -17,6 +17,8 @@ public class VariantRepo(
     {
         var query = _context.Variants.AsQueryable();
 
+        query = query.Include(x => x.Brand);
+
         if (variantFilter.query != null)
         {
             query = query.Where(x => EF.Functions.Like(x.Name, $"%{variantFilter.query}%"));
@@ -63,6 +65,11 @@ public class VariantRepo(
     public async Task<bool> CheckVariantNameExist(string variantName, Guid brandId)
     {
         return await _context.Variants.AnyAsync(x => x.Name == variantName && x.BrandId == brandId);
+    }
+
+    public async Task<bool> CheckVariantHasItems(Guid id)
+    {
+        return await _context.Items.AnyAsync(x => x.VariantId == id);
     }
 
     public async Task CreateVariant(Variant Variant)

@@ -6,6 +6,7 @@ namespace Pos.App.Sales.Interfaces.Repositories;
 public interface IItemRepo
 {
     Task<(List<Item>, int, int)> GetPaginatedItems(ItemFilter itemFilter, int pageIndex, int pageSize);
+    Task<List<Item>> GetItems(List<Guid> ids);
     Task<Item> GetItem(Guid id);
     Task<Item> GetFullItem(Guid id);
     Task<bool> CheckItemIdExist(Guid id);

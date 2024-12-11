@@ -8,9 +8,15 @@ public class ItemProfile : Profile
 {
     public ItemProfile()
     {
-        CreateMap<Item, ItemResponse>();
+        CreateMap<Item, ItemResponse>()
+            .ForMember(dest =>
+                dest.Name,
+                opt => opt.MapFrom( src => src.Variant.Brand.Name + " " + src.Variant.Name ));
 
-        CreateMap<Item, ItemResponseSingle>();
+        CreateMap<Item, ItemResponseSingle>()
+            .ForMember(dest =>
+                dest.Brand,
+                opt => opt.MapFrom( src => src.Variant.Brand ));
 
         CreateMap<CreateItemRequest, Item>();
     }

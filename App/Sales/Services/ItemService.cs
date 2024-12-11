@@ -10,23 +10,17 @@ using Pos.Exceptions;
 
 namespace Pos.App.Sales.Services;
 
-public class ItemService : IItemService
+public class ItemService(
+    IMapper mapper,
+    IItemRepo itemRepo,
+    IVariantRepo variantRepo,
+    IStringLocalizer<ItemService> localizer
+    ) : IItemService
 {
-    private readonly IMapper _mapper;
-    private readonly IItemRepo _itemRepo;
-    private readonly IStringLocalizer<ItemService> _localizer;
-
-    public ItemService(
-        IMapper mapper,
-        IItemRepo itemRepo,
-        IStringLocalizer<ItemService> localizer
-    )
-    {
-        _mapper = mapper;
-        _itemRepo = itemRepo;
-        _localizer = localizer;
-    }
-
+    private readonly IMapper _mapper = mapper;
+    private readonly IItemRepo _itemRepo = itemRepo;
+    private readonly IVariantRepo _variantRepo = variantRepo;
+    private readonly IStringLocalizer<ItemService> _localizer = localizer;
 
     public async Task<PaginatedResponse<ItemResponse>> GetPaginatedItem(ItemFilter filter)
     {
@@ -46,6 +40,12 @@ public class ItemService : IItemService
 
     public async Task<BaseResponse<ItemResponse>> CreateItem(CreateItemRequest model)
     {
+        // Check if Variant not exist on database
+        if (! await _variantRepo.CheckVariantIdExist(model.VariantId))
+        {
+            throw new AppException(_localizer["variant_not_found"], "variant_not_found");
+        }
+
         // Check if Item Name Already exist on database
         if (await _itemRepo.CheckItemWithVariantExist(model.VariantId))
         {
@@ -56,12 +56,20 @@ public class ItemService : IItemService
 
         await _itemRepo.CreateItem(item);
 
+        item.Variant = await _variantRepo.GetFullVariant(item.VariantId);
+
         return GlobalHelpers.CreateBaseResponse("success", _mapper.Map<ItemResponse>(item));
     }
 
     public async Task<BaseResponse<ItemResponse>> UpdateItem(Guid id, UpdateItemRequest model)
     {
         Item item = await getItem(id);
+
+        // Check if Variant not exist on database
+        if (! await _variantRepo.CheckVariantIdExist(model.VariantId))
+        {
+            throw new AppException(_localizer["variant_not_found"], "variant_not_found");
+        }
 
         // check if Item Name Already exist on database (in another id)
         if (item.VariantId != model.VariantId)
@@ -77,6 +85,8 @@ public class ItemService : IItemService
         item.Quantity = model.Quantity;
 
         await _itemRepo.UpdateItem(item);
+
+        item.Variant = await _variantRepo.GetFullVariant(item.VariantId);
 
         return GlobalHelpers.CreateBaseResponse("success", _mapper.Map<ItemResponse>(item));
 

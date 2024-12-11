@@ -15,9 +15,9 @@ public class VariantController(
 
     [HttpGet]
     [Produces("application/json")]
-    public async Task<ActionResult<PaginatedResponse<VariantResponse>>> GetPaginatedVariant([FromQuery] VariantFilter filter)
+    public async Task<ActionResult<PaginatedResponse<VariantFrontResponse>>> GetPaginatedVariant([FromQuery] VariantFilter filter)
     {
-        PaginatedResponse<VariantResponse> variants = await _variantService.GetPaginatedVariant(filter);
+        PaginatedResponse<VariantFrontResponse> variants = await _variantService.GetPaginatedVariant(filter);
         return Ok(variants);
     }
 

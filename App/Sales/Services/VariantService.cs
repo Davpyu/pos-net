@@ -1,3 +1,4 @@
+using System.Globalization;
 using AutoMapper;
 using Pos.App.BaseModule.Models;
 using Pos.App.Sales.Interfaces.Repositories;
@@ -7,35 +8,31 @@ using Pos.Entities;
 using Microsoft.Extensions.Localization;
 using Pos.Helpers;
 using Pos.Exceptions;
+using System.Resources;
 
 namespace Pos.App.Sales.Services;
 
-public class VariantService : IVariantService
-{
-    private readonly IMapper _mapper;
-    private readonly IVariantRepo _variantRepo;
-    private readonly IStringLocalizer<VariantService> _localizer;
-
-    public VariantService(
+public class VariantService(
         IMapper mapper,
+        IBrandRepo brandRepo,
         IVariantRepo variantRepo,
         IStringLocalizer<VariantService> localizer
-    )
-    {
-        _mapper = mapper;
-        _variantRepo = variantRepo;
-        _localizer = localizer;
-    }
+    ) : IVariantService
+{
+    private readonly IMapper _mapper = mapper;
+    private readonly IBrandRepo _brandRepo = brandRepo;
+    private readonly IVariantRepo _variantRepo = variantRepo;
+    private readonly IStringLocalizer<VariantService> _localizer = localizer;
 
 
-    public async Task<PaginatedResponse<VariantResponse>> GetPaginatedVariant(VariantFilter filter)
+    public async Task<PaginatedResponse<VariantFrontResponse>> GetPaginatedVariant(VariantFilter filter)
     {
         int pageSize = GlobalHelpers.ValidatePageSize(filter.pageSize);
         int pageIndex = filter.page > 1 ? filter.page : 1;
 
         (List<Variant> result, int count, int totalPages) = await _variantRepo.GetPaginatedVariants(filter, pageIndex, pageSize);
 
-        return GlobalHelpers.CreatePaginatedResponse("success", _mapper.Map<IEnumerable<VariantResponse>>(result), pageIndex, totalPages, count);
+        return GlobalHelpers.CreatePaginatedResponse("success", _mapper.Map<IEnumerable<VariantFrontResponse>>(result), pageIndex, totalPages, count);
     }
 
     public async Task<BaseResponse<VariantResponseSingle>> GetVariantById(Guid id)
@@ -46,10 +43,16 @@ public class VariantService : IVariantService
 
     public async Task<BaseResponse<VariantResponse>> CreateVariant(CreateVariantRequest model)
     {
+        // Check if Brand not exist on database
+        if (! await _brandRepo.CheckBrandIdExist(model.BrandId))
+        {
+            throw new AppException(_localizer["brand_not_found"], "brand_not_found");
+        }
+
         // Check if Variant Name Already exist on database
         if (await _variantRepo.CheckVariantNameExist(model.Name, model.BrandId))
         {
-            throw new AppException(_localizer["duplicate_variant_name"], "duplicate_variant_name");
+            throw new AppException(_localizer.GetString("duplicate_variant_name"), "duplicate_variant_name");
         }
 
         Variant variant = _mapper.Map<Variant>(model);
@@ -62,6 +65,12 @@ public class VariantService : IVariantService
     public async Task<BaseResponse<VariantResponse>> UpdateVariant(Guid id, UpdateVariantRequest model)
     {
         Variant variant = await getVariant(id);
+
+        // Check if Brand not exist on database
+        if (! await _brandRepo.CheckBrandIdExist(model.BrandId))
+        {
+            throw new AppException(_localizer["brand_not_found"], "brand_not_found");
+        }
 
         // check if Variant Name Already exist on database (in another id)
         if (variant.Name != model.Name)
@@ -83,6 +92,12 @@ public class VariantService : IVariantService
 
     public async Task DeleteVariant(Guid id)
     {
+        // Check if variant has data on items on database
+        if (await _variantRepo.CheckVariantHasItems(id))
+        {
+            throw new AppException(_localizer["variant_has_data"], "variant_has_data");
+        }
+
         Variant variant = await getVariant(id);
 
         await _variantRepo.DeleteVariant(variant);

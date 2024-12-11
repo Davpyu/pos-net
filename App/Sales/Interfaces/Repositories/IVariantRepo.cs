@@ -11,6 +11,7 @@ public interface IVariantRepo
     Task<Variant> GetFullVariant(Guid id);
     Task<bool> CheckVariantIdExist(Guid id);
     Task<bool> CheckVariantNameExist(string variantName, Guid brandId);
+    Task<bool> CheckVariantHasItems(Guid id);
     Task CreateVariant(Variant variant);
     Task UpdateVariant(Variant variant);
     Task DeleteVariant(Variant variant);

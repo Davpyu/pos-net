@@ -12,6 +12,14 @@ public static class GlobalHelpers
         return validPageSizes.Contains(pageSize) ? pageSize : 10;
     }
 
+    public static string RandomString(int length)
+    {
+        Random random = new();
+
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
+    }
+
     public static BaseResponse<T> CreateBaseResponse<T>(string message, T data)
     {
         return new()

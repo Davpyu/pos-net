@@ -41,6 +41,12 @@ public class ItemRepo(
         int totalPages = (int)Math.Ceiling(count / (double)pageSize);
         return (result, count, totalPages);
     }
+
+    public async Task<List<Item>> GetItems(List<Guid> ids)
+    {
+        return await _context.Items.Include(x => x.Variant).ThenInclude(x => x.Brand).Where(x => ids.Contains(x.Id)).ToListAsync();
+    }
+
     public async Task<Item> GetItem(Guid id)
     {
         return await _context.Items.FirstOrDefaultAsync(x => x.Id == id);

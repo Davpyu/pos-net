@@ -10,22 +10,15 @@ using Pos.Helpers;
 
 namespace Pos.App.Sales.Services;
 
-public class BrandService : IBrandService
+public class BrandService(
+    IMapper mapper,
+    IBrandRepo brandRepo,
+    IStringLocalizer<BrandService> localizer
+    ) : IBrandService
 {
-    private readonly IMapper _mapper;
-    private readonly IBrandRepo _brandRepo;
-    private readonly IStringLocalizer<BrandService> _localizer;
-
-    public BrandService(
-        IMapper mapper,
-        IBrandRepo brandRepo,
-        IStringLocalizer<BrandService> localizer
-    )
-    {
-        _mapper = mapper;
-        _brandRepo = brandRepo;
-        _localizer = localizer;
-    }
+    private readonly IMapper _mapper = mapper;
+    private readonly IBrandRepo _brandRepo = brandRepo;
+    private readonly IStringLocalizer<BrandService> _localizer = localizer;
 
     public async Task<BaseResponse<List<SelectDataResponse>>> GetListBrand()
     {

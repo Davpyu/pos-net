@@ -8,6 +8,11 @@ public class VariantProfile : Profile
 {
     public VariantProfile()
     {
+        CreateMap<Variant, VariantFrontResponse>()
+            .ForMember(dest =>
+                dest.Brand,
+                opt => opt.MapFrom( src => src.Brand.Name ));
+
         CreateMap<Variant, VariantResponse>();
 
         CreateMap<Variant, VariantResponseSingle>();
