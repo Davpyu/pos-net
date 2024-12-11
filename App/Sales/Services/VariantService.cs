@@ -51,7 +51,7 @@ public class VariantService(
         // Check if Brand not exist on database
         if (! await _brandRepo.CheckBrandIdExist(model.BrandId))
         {
-            throw new AppException(_localizer["brand_not_found"], "brand_not_found");
+            throw new KeyNotFoundException(_localizer["brand_not_found"]);
         }
 
         // Check if Variant Name Already exist on database
@@ -74,7 +74,7 @@ public class VariantService(
         // Check if Brand not exist on database
         if (! await _brandRepo.CheckBrandIdExist(model.BrandId))
         {
-            throw new AppException(_localizer["brand_not_found"], "brand_not_found");
+            throw new KeyNotFoundException(_localizer["brand_not_found"]);
         }
 
         // check if Variant Name Already exist on database (in another id)

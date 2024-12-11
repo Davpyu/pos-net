@@ -26,7 +26,7 @@ public class CartService(
 
     public async Task<BaseResponse<CartResponse>> AddToExistingCart(string key, CartRequest model)
     {
-        CartCacheResponse cart = await _cacheService.GetRedisCache<CartCacheResponse>(key) ?? throw new AppException(_localizer["cart_not_found"], "cart_not_found");
+        CartCacheResponse cart = await _cacheService.GetRedisCache<CartCacheResponse>(key) ?? throw new KeyNotFoundException(_localizer["cart_not_found"]);
         Item item = await _itemRepo.GetItem(model.ItemId);
 
         if (cart.Carts.Any(x => x.ItemId == model.ItemId))
@@ -109,7 +109,7 @@ public class CartService(
 
     public async Task<BaseResponse<CartResponse>> GetCartByKey(string key)
     {
-        CartCacheResponse cart = await _cacheService.GetRedisCache<CartCacheResponse>(key) ?? throw new AppException(_localizer["cart_not_found"], "cart_not_found");
+        CartCacheResponse cart = await _cacheService.GetRedisCache<CartCacheResponse>(key) ?? throw new KeyNotFoundException(_localizer["cart_not_found"]);
 
         List<Item> items = await _itemRepo.GetItems(cart.Carts.Select(x => x.ItemId).ToList());
 
@@ -129,11 +129,11 @@ public class CartService(
 
     public async Task<BaseResponse<CartResponse>> UpdateQuantityCart(string key, CartRequest model)
     {
-        CartCacheResponse cart = await _cacheService.GetRedisCache<CartCacheResponse>(key) ?? throw new AppException(_localizer["cart_not_found"], "cart_not_found");
+        CartCacheResponse cart = await _cacheService.GetRedisCache<CartCacheResponse>(key) ?? throw new KeyNotFoundException(_localizer["cart_not_found"]);
 
         if (! cart.Carts.Any(x => x.ItemId == model.ItemId))
         {
-            throw new AppException(_localizer["item_not_found_on_cart"], "item_not_found_on_cart");
+            throw new KeyNotFoundException(_localizer["item_not_found_on_cart"]);
         }
 
         CartRequest item = cart.Carts.Where(x => x.ItemId == model.ItemId).First();

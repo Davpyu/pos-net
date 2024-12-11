@@ -34,18 +34,12 @@ public class ErrorHandlerMiddleware
             switch (error)
             {
                 case AppException e:
-                    if (e.Code.Contains("not_found"))
-                    {
-                        response.StatusCode = (int)HttpStatusCode.NotFound;
-                    }
-
-                    else
-                    {
-                        // custom application error
-                        response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    }
-
+                    response.StatusCode = (int)HttpStatusCode.BadRequest;
                     errorCode = e.Code;
+                    break;
+                case KeyNotFoundException e:
+                    response.StatusCode = (int)HttpStatusCode.NotFound;
+                    errorCode = "not_found";
                     break;
                 default:
                     // unhandled error

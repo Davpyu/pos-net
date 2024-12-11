@@ -43,7 +43,7 @@ public class ItemService(
         // Check if Variant not exist on database
         if (! await _variantRepo.CheckVariantIdExist(model.VariantId))
         {
-            throw new AppException(_localizer["variant_not_found"], "variant_not_found");
+            throw new KeyNotFoundException(_localizer["variant_not_found"]);
         }
 
         // Check if Item Name Already exist on database
@@ -68,7 +68,7 @@ public class ItemService(
         // Check if Variant not exist on database
         if (! await _variantRepo.CheckVariantIdExist(model.VariantId))
         {
-            throw new AppException(_localizer["variant_not_found"], "variant_not_found");
+            throw new KeyNotFoundException(_localizer["variant_not_found"]);
         }
 
         // check if Item Name Already exist on database (in another id)
