@@ -5,6 +5,7 @@ namespace Pos.App.Sales.Interfaces.Shared;
 
 public interface IVariantService
 {
+    Task<BaseResponse<List<SelectDataResponse>>> GetListVariant();
     Task<PaginatedResponse<VariantFrontResponse>> GetPaginatedVariant(VariantFilter filter);
     Task<BaseResponse<VariantResponseSingle>> GetVariantById(Guid id);
     Task<BaseResponse<VariantResponse>> CreateVariant(CreateVariantRequest model);

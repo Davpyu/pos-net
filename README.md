@@ -15,7 +15,7 @@ To run this application, you need to have the following prerequisites installed:
 
 ## Cloning the Repository
 
-To get started, clone the repository from Gitlab:
+To get started, clone the repository from Github:
 
 ```bash
 git clone git@github.com:Davpyu/pos-net.git

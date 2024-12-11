@@ -6,6 +6,7 @@ namespace Pos.App.Sales.Interfaces.Repositories;
 
 public interface IVariantRepo
 {
+    Task<List<Variant>> GetAllVariants();
     Task<(List<Variant>, int, int)> GetPaginatedVariants(VariantFilter variantFilter, int pageIndex, int pageSize);
     Task<Variant> GetVariant(Guid id);
     Task<Variant> GetFullVariant(Guid id);

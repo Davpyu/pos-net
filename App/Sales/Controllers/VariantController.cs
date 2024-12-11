@@ -21,6 +21,14 @@ public class VariantController(
         return Ok(variants);
     }
 
+    [HttpGet("select-data")]
+    [Produces("application/json")]
+    public async Task<ActionResult<BaseResponse<List<SelectDataResponse>>>> GetVariantSelectData()
+    {
+        BaseResponse<List<SelectDataResponse>> variant = await _variantService.GetListVariant();
+        return Ok(variant);
+    }
+
     [HttpGet("{id}")]
     [Produces("application/json")]
     public async Task<ActionResult<BaseResponse<VariantResponseSingle>>> GetVariantById(Guid id)

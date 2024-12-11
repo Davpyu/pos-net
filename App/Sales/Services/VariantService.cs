@@ -8,7 +8,6 @@ using Pos.Entities;
 using Microsoft.Extensions.Localization;
 using Pos.Helpers;
 using Pos.Exceptions;
-using System.Resources;
 
 namespace Pos.App.Sales.Services;
 
@@ -24,6 +23,12 @@ public class VariantService(
     private readonly IVariantRepo _variantRepo = variantRepo;
     private readonly IStringLocalizer<VariantService> _localizer = localizer;
 
+    public async Task<BaseResponse<List<SelectDataResponse>>> GetListVariant()
+    {
+        List<Variant> variants = await _variantRepo.GetAllVariants();
+
+        return GlobalHelpers.CreateBaseResponse("success", _mapper.Map<List<SelectDataResponse>>(variants));
+    }
 
     public async Task<PaginatedResponse<VariantFrontResponse>> GetPaginatedVariant(VariantFilter filter)
     {

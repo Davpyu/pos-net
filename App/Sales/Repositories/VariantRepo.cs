@@ -40,7 +40,7 @@ public class VariantRepo(
 
     public async Task<List<Variant>> GetAllVariants()
     {
-        return await _context.Variants.ToListAsync();
+        return await _context.Variants.Include(x => x.Brand).ToListAsync();
     }
 
     public async Task<Variant> GetVariant(Guid id)
