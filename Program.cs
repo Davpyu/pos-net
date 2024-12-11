@@ -2,8 +2,13 @@ using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Pos.App.Sales.Interfaces.Repositories;
+using Pos.App.Sales.Interfaces.Shared;
+using Pos.App.Sales.Repositories;
+using Pos.App.Sales.Services;
 using Pos.Configs;
 using Pos.Helpers;
+using Pos.Middlewares;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -22,36 +27,6 @@ builder.Services.AddCors(opt =>
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
-builder.Services.Configure<RequestLocalizationOptions>(
-options =>
-{
-    var supportedCultures = new List<CultureInfo>
-    {
-        new("id-ID"),
-        new("en-US"),
-    };
-
-    options.DefaultRequestCulture = new RequestCulture("id-ID");
-    // Formatting numbers, dates, etc.
-    options.SupportedCultures = supportedCultures;
-    // UI strings that we have localized.
-    options.SupportedUICultures = supportedCultures;
-
-    options.RequestCultureProviders.Insert(0, new CustomRequestCultureProvider(context =>
-    {
-        var languages = context.Request.Headers["Accept-Language"].ToString();
-        var currentLanguage = languages.Split(',').FirstOrDefault();
-        var defaultLanguage = string.IsNullOrEmpty(currentLanguage) ? "id-ID" : currentLanguage;
-
-        if (defaultLanguage != "id-ID" && defaultLanguage != "en-US")
-        {
-            defaultLanguage = "id-ID";
-        }
-
-        return Task.FromResult(new ProviderCultureResult(defaultLanguage, defaultLanguage));
-    }));
-});
-
 builder.Services.AddControllers();
 
 string dbConfig = builder.Configuration.GetConnectionString("PosDatabase");
@@ -67,6 +42,13 @@ builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = redisConfig;
 });
+
+builder.Services.AddScoped<IBrandRepo, BrandRepo>();
+builder.Services.AddScoped<IBrandService, BrandService>();
+builder.Services.AddScoped<IItemRepo, ItemRepo>();
+builder.Services.AddScoped<IItemService, ItemService>();
+builder.Services.AddScoped<IVariantRepo, VariantRepo>();
+builder.Services.AddScoped<IVariantService, VariantService>();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -106,5 +88,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAll");
+app.UseMiddleware<ErrorHandlerMiddleware>();
 
 app.Run();
