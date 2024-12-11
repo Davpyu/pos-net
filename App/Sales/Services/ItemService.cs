@@ -49,7 +49,7 @@ public class ItemService : IItemService
         // Check if Item Name Already exist on database
         if (await _itemRepo.CheckItemWithVariantExist(model.VariantId))
         {
-            throw new AppException(_localizer["duplicate_item_name"], "duplicate_item_name");
+            throw new AppException(_localizer["duplicate_item"], "duplicate_item");
         }
 
         Item item = _mapper.Map<Item>(model);
@@ -68,7 +68,7 @@ public class ItemService : IItemService
         {
             if (await _itemRepo.CheckItemWithVariantExist(model.VariantId))
             {
-                throw new AppException(_localizer["duplicate_item_name"], "duplicate_item_name");
+                throw new AppException(_localizer["duplicate_item"], "duplicate_item");
             }
         }
 

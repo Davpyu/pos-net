@@ -31,17 +31,17 @@ public class VariantController(
 
     [HttpPost]
     [Produces("application/json")]
-    public async Task<ActionResult<BaseResponse<VariantResponseSingle>>> CreateVariant(CreateVariantRequest model)
+    public async Task<ActionResult<BaseResponse<VariantResponse>>> CreateVariant(CreateVariantRequest model)
     {
-        BaseResponse<VariantResponseSingle> variant = await _variantService.CreateVariant(model);
+        BaseResponse<VariantResponse> variant = await _variantService.CreateVariant(model);
         return Ok(variant);
     }
 
     [HttpPut("{id}")]
     [Produces("application/json")]
-    public async Task<ActionResult<BaseResponse<VariantResponseSingle>>> UpdateVariant(Guid id, UpdateVariantRequest model)
+    public async Task<ActionResult<BaseResponse<VariantResponse>>> UpdateVariant(Guid id, UpdateVariantRequest model)
     {
-        BaseResponse<VariantResponseSingle> variant = await _variantService.UpdateVariant(id, model);
+        BaseResponse<VariantResponse> variant = await _variantService.UpdateVariant(id, model);
         return Ok(variant);
     }
 
