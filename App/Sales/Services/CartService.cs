@@ -71,6 +71,13 @@ public class CartService(
 
     public async Task<BaseResponse<CartResponse>> AddToNewCart(CartRequest model)
     {
+        Item item = await _itemRepo.GetItem(model.ItemId);
+
+        if (model.Quantity > item.Quantity)
+        {
+            throw new AppException(_localizer["item_quantity_too_large"], "item_quantity_too_large");
+        }
+
         string key = GlobalHelpers.RandomString(6);
 
         CartCacheResponse cart = new()
