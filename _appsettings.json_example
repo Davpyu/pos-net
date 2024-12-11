@@ -1,0 +1,17 @@
+{
+  "AppSettings": {
+    "ServiceName": "YOUR_SERVICE_NAME",
+    "EnableDBLogging": true
+  },
+  "ConnectionStrings": {
+    "PosDatabase": "YOUR_CONNECTION_STRING_MYSQL",
+    "Redis": "YOUR_CONNECTION_STRING_REDIS"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "Urls": "http://localhost:5001"
+}
