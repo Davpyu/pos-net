@@ -8,5 +8,5 @@ public class ItemFilter : BaseFilter
 {
     [EnumDataType(typeof(ItemSort))]
     public ItemSort sort { get; set; }
-    public Guid? BrandId { get; set; }
+    public Guid? brandId { get; set; }
 }

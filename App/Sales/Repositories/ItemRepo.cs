@@ -24,6 +24,11 @@ public class ItemRepo(
             query = query.Where(x => EF.Functions.Like(x.Variant.Brand.Name, $"%{itemFilter.query}%") || EF.Functions.Like(x.Variant.Name, $"%{itemFilter.query}%"));
         }
 
+        if (itemFilter.brandId != null)
+        {
+            query = query.Where(x => x.Variant.BrandId == itemFilter.brandId);
+        }
+
         query = itemFilter.sort switch
         {
             ItemSort.Alphabetical => query.OrderBy( x => x.Variant.Brand.Name ).ThenBy( x => x.Variant.Name ),
